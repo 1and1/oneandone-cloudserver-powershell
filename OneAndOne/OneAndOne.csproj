@@ -35,12 +35,12 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OneAndOne.Client, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OneAndOne.Client.1.1.0\lib\net45\OneAndOne.Client.dll</HintPath>
+    <Reference Include="OneAndOne.Client, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OneAndOne.Client.1.1.1\lib\net45\OneAndOne.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OneAndOne.POCO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OneAndOne.Client.1.1.0\lib\net45\OneAndOne.POCO.dll</HintPath>
+      <HintPath>..\packages\OneAndOne.Client.1.1.1\lib\net45\OneAndOne.POCO.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
