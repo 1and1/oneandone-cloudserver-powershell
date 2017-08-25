@@ -1,6 +1,7 @@
 # oneandone-cloudserver-powershell
 1&amp;1 Cloud Server module for PowerShell
 
+For more information on the 1&amp;1 Cloud Server module for PowerShell see the [1&1 Community Portal](https://www.1and1.com/cloud-community/).
 
 # Table of Contents
 
