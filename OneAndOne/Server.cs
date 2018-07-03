@@ -143,6 +143,55 @@ namespace OneAndOne
 
 
     /// <summary>
+    /// <para type="synopsis">This commandlet will get one or a list of available baremetal hardware models.</para>
+    /// </summary>
+    /// <example>
+    /// <para type="description">Get-OAOBaremetalModels -ModelId [UUID]</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Get, "OAOBaremetalModels")]
+    [OutputType(typeof(BaremetalResponse))]
+    public class GetBaremetalModel : Cmdlet
+    {
+
+        private static OneAndOneClient client;
+        #region Parameters
+
+        /// <summary>
+        /// <para type="description">BaremetalModel ID. If this parameters is not passed, the commandlet will return a list of all models.</para>
+        /// </summary>
+        [Parameter(Position = 0, HelpMessage = "Server Id", ValueFromPipeline = true)]
+        public string BaremetalModelId { get; set; }
+
+        #endregion
+
+        protected override void BeginProcessing()
+        {
+            try
+            {
+                client = OneAndOneClient.Instance(Helper.Configuration);
+                var serverApi = client.Servers;
+
+                if (string.IsNullOrEmpty(BaremetalModelId))
+                {
+                    var models = serverApi.GetBaremetal();
+                    WriteObject(models);
+                }
+                else
+                {
+                    var model = serverApi.ShowBaremetal(BaremetalModelId);
+                    WriteObject(model);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                WriteError(new ErrorRecord(ex, "", ErrorCategory.NotSpecified, null));
+            }
+        }
+    }
+
+
+    /// <summary>
     /// <para type="synopsis">This commandlet will create a server with custom hardware settings</para>
     /// </summary>
     /// <example>
@@ -285,7 +334,8 @@ namespace OneAndOne
                     RegionId = RegionId ?? null,
                     PowerOn = PowerOn,
                     Password = Password ?? null,
-                    IpId = publicIp != null ? publicIp.Id : null
+                    IpId = publicIp != null ? publicIp.Id : null,
+
                 });
 
                 WriteVerbose("Creating the server...");
@@ -446,6 +496,151 @@ namespace OneAndOne
 
     }
 
+    /// <summary>
+    /// <para type="synopsis">This commandlet will create a baremetal server with a flavored baremetal hardware profile.</para>
+    /// </summary>
+    /// <example>
+    /// <para type="description">New-OAOBaremetalServer -Name [name] -BaremetalModelId [UUID] -ApplianceId [UUID] -RegionId [UUID] -Password [password] -PowerOn [poweron] -IpId [UUID] -LoadrBalancerId [UUID] -MonitoringPolicyId [UUID]</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.New, "OAOBaremetalServer")]
+    [OutputType(typeof(CreateServerResponse))]
+    public class NewBaremetalServer : Cmdlet
+    {
+        private static OneAndOneClient client;
+
+        #region Parameters
+
+        /// <summary>
+        /// <para type="description">The hostname of the server. Mandatory parameter.</para>
+        /// </summary>
+        [Parameter(Position = 0, HelpMessage = "The hostname of the server.", Mandatory = true, ValueFromPipeline = true)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// <para type="description">The hostname of the server. Mandatory parameter.</para>
+        /// </summary>
+        [Parameter(Position = 1, HelpMessage = "The Description of the server.", Mandatory = false, ValueFromPipeline = true)]
+        public string Description { get; set; }
+
+
+        /// <summary>
+        /// <para type="description">Size of the ID desired for the server</para>
+        /// </summary>
+        [Parameter(Position = 2, HelpMessage = "The id of the desired baremetal hardware model", Mandatory = true, ValueFromPipeline = true)]
+        public string BaremetalModelId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Image will be installed on server.</para>
+        /// </summary>
+        [Parameter(Position = 3, HelpMessage = "Image will be installed on server.", Mandatory = true, ValueFromPipeline = true)]
+        public string ApplianceId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Password of the server.</para>
+        /// </summary>
+        [Parameter(Position = 4, HelpMessage = "Password of the server. Password must contain more than 8 characters using uppercase letters, numbers and other special symbols. minLength: 8,maxLength: 64.", Mandatory = false, ValueFromPipeline = true)]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// <para type="description">Region id</para>
+        /// </summary>
+        [Parameter(Position = 5, HelpMessage = "ID of the region where the server will be created", Mandatory = false, ValueFromPipeline = true)]
+        public string RegionId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Power on server after creation</para>
+        /// </summary>
+        [Parameter(Position = 6, HelpMessage = "Power on server after creation", Mandatory = false, ValueFromPipeline = true)]
+        public bool PowerOn { get; set; }
+
+        /// <summary>
+        /// <para type="description">Firewall policy's ID.</para>
+        /// </summary>
+        [Parameter(Position = 7, HelpMessage = "Firewall policy's ID to attach", Mandatory = false, ValueFromPipeline = true)]
+        public string FirewallPolicyId { get; set; }
+
+
+        /// <summary>
+        /// <para type="description">IP's ID.</para>
+        /// </summary>
+        [Parameter(Position = 8, HelpMessage = "IP's ID", Mandatory = false, ValueFromPipeline = true)]
+        public string IpId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Load balancer's ID</para>
+        /// </summary>
+        [Parameter(Position = 9, HelpMessage = "Load balancer's ID ", Mandatory = false, ValueFromPipeline = true)]
+        public string LoadrBalancerId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Monitoring policy's ID</para>
+        /// </summary>
+        [Parameter(Position = 10, HelpMessage = "Monitoring policy's ID ", Mandatory = false, ValueFromPipeline = true)]
+        public string MonitoringPolicyId { get; set; }
+
+
+
+        #endregion
+
+        protected override void BeginProcessing()
+        {
+            try
+            {
+
+                client = OneAndOneClient.Instance(Helper.Configuration);
+                var serverApi = client.Servers;
+                ServerAppliancesResponse serverAppliance = null;
+                PublicIPsResponse publicIp = null;
+                BaremetalResponse baremetalmodel = null;
+                if (!string.IsNullOrEmpty(ApplianceId))
+                {
+                    serverAppliance = client.ServerAppliances.Show(ApplianceId);
+                }
+                if (!string.IsNullOrEmpty(IpId))
+                {
+                    publicIp = client.PublicIPs.Show(IpId);
+                }
+
+                if (!string.IsNullOrEmpty(BaremetalModelId))
+                {
+                    baremetalmodel = client.Servers.ShowBaremetal(BaremetalModelId);
+                }
+
+                var hardware = new POCO.Requests.Servers.HardwareRequest
+                {
+                    BaremetalModelId = baremetalmodel.Id
+
+                };
+
+                var result = client.Servers.Create(new POCO.Requests.Servers.CreateServerRequest()
+                {
+                    ApplianceId = serverAppliance != null ? serverAppliance.Id : null,
+                    Name = Name,
+                    Description = Description ?? null,
+                    Hardware = hardware,
+                    FirewallPolicyId = FirewallPolicyId ?? null,
+                    LoadrBalancerId = LoadrBalancerId ?? null,
+                    MonitoringPolicyId = MonitoringPolicyId ?? null,
+                    RegionId = RegionId ?? null,
+                    PowerOn = PowerOn,
+                    Password = Password ?? null,
+                    IpId = publicIp != null ? publicIp.Id : null,
+                    ServerType = ServerType.baremetal
+                });
+
+                WriteVerbose("Creating the server...");
+
+                WriteObject(result);
+
+            }
+            catch (Exception ex)
+            {
+                WriteError(new ErrorRecord(ex, "", ErrorCategory.NotSpecified, null));
+            }
+        }
+
+    }
+
 
     /// <summary>
     /// <para type="synopsis">This commandlet will remove the specified server.</para>
@@ -549,7 +744,7 @@ namespace OneAndOne
     /// <para type="description">Get-OAOServerHardware -ServerId [UUID]</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "OAOServerHardware")]
-    [OutputType(typeof(Hardware))]
+    [OutputType(typeof(HardwareBase))]
     public class GetServerHardware : Cmdlet
     {
 
@@ -1041,7 +1236,7 @@ namespace OneAndOne
             {
                 client = OneAndOneClient.Instance(Helper.Configuration);
                 var serverIpApi = client.ServerIps;
-                var resp = serverIpApi.Create(new CreateServerIPRequest { Type = IPType.IPV4 }, ServerId);
+                var resp = serverIpApi.Create(new CreateServerIPRequest { Type = IPType.Ipv4 }, ServerId);
 
                 WriteVerbose("Adding ips to the server...");
 

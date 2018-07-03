@@ -35,13 +35,11 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OneAndOne.Client, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OneAndOne.Client.1.1.1\lib\net45\OneAndOne.Client.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OneAndOne.Client, Version=1.3.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OneAndOne.Client.1.3.1.1\lib\net45\OneAndOne.Client.dll</HintPath>
     </Reference>
     <Reference Include="OneAndOne.POCO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OneAndOne.Client.1.1.1\lib\net45\OneAndOne.POCO.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\OneAndOne.Client.1.3.1.1\lib\net45\OneAndOne.POCO.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
@@ -98,6 +96,7 @@
     <None Include="test_scripts\publicip_test.ps1" />
     <None Include="test_scripts\role_test.ps1" />
     <None Include="test_scripts\server_IPS_tests.ps1" />
+    <None Include="test_scripts\baremetal_server_test.ps1" />
     <None Include="test_scripts\server_test.ps1" />
     <None Include="test_scripts\shared_storage_test.ps1" />
     <None Include="test_scripts\users_test.ps1" />
