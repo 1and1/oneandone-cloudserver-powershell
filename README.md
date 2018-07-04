@@ -125,11 +125,25 @@ After successful authentication the credentials will be stored locally for the d
 
 `Get-OAOHardwareFlavor -FlavorId $falvorId`
 
+**List baremetal server models:**
+
+`Get-OAOBaremetalModels`
+
+**Show a single server flavor:**
+
+`Get-OAOBaremetalModels -ModelId $modelId`
+
 **Create a server:**
 
 ```
 $hdds =@([OneAndOne.POCO.Requests.Servers.HddRequest]@{Size=20;IsMain=$true})
 New-OAOServer -Name "server name" -Vcore 4 -CoresPerProcessor 2 -Ram 4 -Hdds $hdds -ApplianceId $serverApplianceId -PowerOn $true 
+```
+
+**Create a baremetal server:**
+
+```
+New-OAOBaremetalServer -Name "ps baremetal serverhardware" -BaremetalModelId $baremetalModelsId -ApplianceId $serverApplianceId -PowerOn $false 
 ```
 
 **Update a server:**		
