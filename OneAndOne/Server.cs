@@ -146,7 +146,7 @@ namespace OneAndOne
     /// <para type="synopsis">This commandlet will get one or a list of available baremetal hardware models.</para>
     /// </summary>
     /// <example>
-    /// <para type="description">Get-OAOBaremetalModels -ModelId [UUID]</para>
+    /// <para type="description">Get-OAOBaremetalModels -BaremetalModelId [UUID]</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "OAOBaremetalModels")]
     [OutputType(typeof(BaremetalResponse))]
@@ -159,7 +159,7 @@ namespace OneAndOne
         /// <summary>
         /// <para type="description">BaremetalModel ID. If this parameters is not passed, the commandlet will return a list of all models.</para>
         /// </summary>
-        [Parameter(Position = 0, HelpMessage = "Server Id", ValueFromPipeline = true)]
+        [Parameter(Position = 0, HelpMessage = "BaremetalModelId", ValueFromPipeline = true)]
         public string BaremetalModelId { get; set; }
 
         #endregion

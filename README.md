@@ -131,7 +131,7 @@ After successful authentication the credentials will be stored locally for the d
 
 **Show a single server flavor:**
 
-`Get-OAOBaremetalModels -ModelId $modelId`
+`Get-OAOBaremetalModels -BaremetalModelId $modelId`
 
 **Create a server:**
 
