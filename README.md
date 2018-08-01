@@ -426,7 +426,7 @@ New-OAOFirewallPolicyServerIps -FirewallId $firewallPolicyId -Ips $ips `
 **Adds new rules to a firewall policy:**
 
 ```
-$newRules=@([OneAndOne.POCO.Requests.FirewallPolicies.RuleRequest]@{Port="3030";Action="Allow";Protocol="TCP";Source="0.0.0.0"})
+$newRules=@([OneAndOne.POCO.Requests.FirewallPolicies.RuleRequest]@{Port="3031";Action="Allow";Protocol="TCP";Source="0.0.0.0"})
 New-OAOFirewallPolicyRules -FirewallId $firewallPolicyId -Rules $newRules
 ```
 				
