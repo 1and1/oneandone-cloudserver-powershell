@@ -1410,52 +1410,6 @@ namespace OneAndOne
         }
     }
 
-    /// <summary>
-    /// <para type="synopsis">This commandlet Removes firewall policy from the IP.</para>
-    /// </summary>
-    /// <example>
-    /// <para type="description">Remove-OAOServerIPFirewall -ServerId [UUID] -IpId [UUID] </para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Remove, "OAOServerIPFirewall")]
-    [OutputType(typeof(ServerResponse))]
-    public class RemoveServerIPFirewall : Cmdlet
-    {
-
-        private static OneAndOneClient client;
-
-        #region Parameters
-
-        /// <summary>
-        /// <para type="description">Server ID. Mandatory parameter.</para>
-        /// </summary>
-        [Parameter(Position = 0, HelpMessage = "Server Id", Mandatory = true, ValueFromPipeline = true)]
-        public string ServerId { get; set; }
-
-        /// <summary>
-        /// <para type="description">IP ID. Mandatory parameter.</para>
-        /// </summary>
-        [Parameter(Position = 1, HelpMessage = "IP Id", Mandatory = true, ValueFromPipeline = true)]
-        public string IpId { get; set; }
-
-
-        #endregion
-
-        protected override void BeginProcessing()
-        {
-            try
-            {
-                client = OneAndOneClient.Instance(Helper.Configuration);
-                var ipApi = client.ServerIps;
-                var resp = ipApi.DeleteFirewallPolicy(ServerId, IpId);
-                WriteObject(resp);
-
-            }
-            catch (Exception ex)
-            {
-                WriteError(new ErrorRecord(ex, "", ErrorCategory.NotSpecified, null));
-            }
-        }
-    }
     #endregion
 
     #region ip loadbalancer

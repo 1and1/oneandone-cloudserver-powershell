@@ -121,11 +121,6 @@ if($getFW.Id -ne $null)
    write-host "Found FW" $getFW.Name
 }
 
-$removeFw=Remove-OAOServerIPFirewall -ServerId $server.Id -IpId $server.Ips[0].Id
-
-#wait on server to deploy and get ready
-waitServer -serverId $server.Id
-
 if($server.Ips.Count -gt 1)
 {
     $removeIP=Remove-OAOServerIP -ServerId $server.Id -IpId $server.Ips[1].Id
