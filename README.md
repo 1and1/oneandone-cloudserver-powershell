@@ -385,7 +385,7 @@ New-OAOSharedStorageServer -StorageId $sharedStorage.Id -Servers $servers`
 **Create a firewall policy:**
 
 ```
-$rules=@([OneAndOne.POCO.Requests.FirewallPolicies.CreateFirewallPocliyRule]@{PortTo=80;PortFrom=80;Protocol="TCP";Source="0.0.0.0"})
+$rules=@([OneAndOne.POCO.Requests.FirewallPolicies.CreateFirewallPocliyRule]@{Port="80";Action="Allow";Protocol="TCP";Source="0.0.0.0"})
 $firewallPolicy=New-OAOFirewallPolicy -Name "name" -Rules $rules
 ```
 			
@@ -426,7 +426,7 @@ New-OAOFirewallPolicyServerIps -FirewallId $firewallPolicyId -Ips $ips `
 **Adds new rules to a firewall policy:**
 
 ```
-$newRules=@([OneAndOne.POCO.Requests.FirewallPolicies.RuleRequest]@{PortTo=3030;PortFrom=3030;Protocol="TCP";Source="0.0.0.0"})
+$newRules=@([OneAndOne.POCO.Requests.FirewallPolicies.RuleRequest]@{Port="3031";Action="Allow";Protocol="TCP";Source="0.0.0.0"})
 New-OAOFirewallPolicyRules -FirewallId $firewallPolicyId -Rules $newRules
 ```
 				

@@ -140,7 +140,6 @@ namespace OneAndOne
                     Description = Description,
                     Rules = new List<CreateFirewallPocliyRule>(Rules)
                 });
-
                 WriteVerbose("Creating the firewall policy...");
                 WriteObject(result);
             }
@@ -348,52 +347,7 @@ namespace OneAndOne
         }
 
     }
-
-    /// <summary>
-    /// <para type="synopsis">This commandlet removes a server ip from the firewall policy.</para>
-    /// </summary>
-    /// <example>
-    /// <para type="description">Remove-OAOFirewallPolicyServerIps -FirewallId [UUID] -IpId [UUID]</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Remove, "OAOFirewallPolicyServerIps")]
-    [OutputType(typeof(FirewallPolicyResponse))]
-    public class RemoveFirewallPolicyServerIps : Cmdlet
-    {
-
-        private static OneAndOneClient client;
-
-        #region Parameters
-
-        /// <summary>
-        /// <para type="description">Firewall Policy ID. Mandatory parameter.</para>
-        /// </summary>
-        [Parameter(Position = 0, HelpMessage = "Firewall Id", Mandatory = true, ValueFromPipeline = true)]
-        public string FirewallId { get; set; }
-
-        /// <summary>
-        /// <para type="description">IP ID.</para>
-        /// </summary>
-        [Parameter(Position = 1, HelpMessage = "Server Id", ValueFromPipeline = true, Mandatory = false)]
-        public string IpId { get; set; }
-
-        #endregion
-
-        protected override void BeginProcessing()
-        {
-            try
-            {
-                client = OneAndOneClient.Instance(Helper.Configuration);
-                var firewallApi = client.FirewallPolicies;
-                var resp = firewallApi.DeleteFirewallPolicyServerIP(FirewallId, IpId);
-                WriteObject(resp);
-
-            }
-            catch (Exception ex)
-            {
-                WriteError(new ErrorRecord(ex, "", ErrorCategory.NotSpecified, null));
-            }
-        }
-    }
+    
     #endregion
 
     #region Firewall policy rules

@@ -15,6 +15,28 @@ function waitServer
 
 }
 
+function waitServerRemoved
+{
+    Param ([String]$serverId)
+    start-sleep -seconds 5
+    $ErrorActionPreference = "Stop";
+	Do{
+        Try{
+	        "Waiting server to get removed"
+
+		    $serverstatus = Get-OAOServerStatus -ServerId $serverId
+
+
+		    start-sleep -seconds 10
+           }
+    Catch{
+    break
+     }
+	
+	}While($true)
+
+}
+
 function waitFirewallPolicy
 {
     Param ([String]$firewallId)
@@ -38,17 +60,30 @@ $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -A
 $credentials = Get-Credential $Credentials
 
 Set-OneAndOne $credentials
-$serverAppliance =Get-OAOServerAppliance -Query "centos"
+$serverAppliance =Get-OAOServerAppliance -Query "ubuntu"
+$serverApplianceUbuntu=$serverAppliance[0]
+
+Foreach ($appliance in $serverAppliance)
+
+{
+
+ if($appliance.Type -eq "IMAGE")
+ {
+  $serverApplianceUbuntu=$appliance
+  break
+ }
+
+}
 
 $hdds =@([OneAndOne.POCO.Requests.Servers.HddRequest]@{Size=20;IsMain=$true})
 
-$server=New-OAOServer -Name "test ps firewall policy" -Vcore 4 -CoresPerProcessor 2 -Ram 4 -Hdds $hdds -ApplianceId $serverAppliance[0].Id `
+$server=New-OAOServer -Name "test ps firewall policy" -Vcore 4 -CoresPerProcessor 2 -Ram 4 -Hdds $hdds -ApplianceId $serverApplianceUbuntu.Id `
 -PowerOn $false 
 
 #wait on server to deploy and get ready
 waitServer -serverId $server.Id
 
-$rules =@([OneAndOne.POCO.Requests.FirewallPolicies.CreateFirewallPocliyRule]@{PortTo=80;PortFrom=80;Protocol="TCP";Source="0.0.0.0"})
+$rules =@([OneAndOne.POCO.Requests.FirewallPolicies.CreateFirewallPocliyRule]@{Port="80";Action="Allow";Protocol="TCP";Source="0.0.0.0"})
 $firewallPolicy=New-OAOFirewallPolicy -Name "ps test firewall policy" -Rules $rules
 
 waitFirewallPolicy $firewallPolicy.Id
@@ -84,10 +119,6 @@ $attachedIps=Get-OAOFirewallPolicyServerIps -FirewallId $firewallPolicy.Id
 "List of attached ips"
 $attachedIps
 
-Remove-OAOFirewallPolicyServerIps -FirewallId $firewallPolicy.Id -IpId $server.Ips[0].Id
-
-waitFirewallPolicy $firewallPolicy.Id
-
 "List of attached ips should be empty"
 
 $attachedServers=Get-OAOFirewallPolicyServerIps -FirewallId $firewallPolicy.Id
@@ -96,7 +127,7 @@ $attachedServers
 
 "firewall policy rules"
 
-$newRules =@([OneAndOne.POCO.Requests.FirewallPolicies.RuleRequest]@{PortTo=3030;PortFrom=3030;Protocol="TCP";Source="0.0.0.0"})
+$newRules =@([OneAndOne.POCO.Requests.FirewallPolicies.RuleRequest]@{Port="3030";Action="Allow";Protocol="TCP";Source="0.0.0.0"})
 $addedRules=New-OAOFirewallPolicyRules -FirewallId $firewallPolicy.Id -Rules $newRules
 
 waitFirewallPolicy $firewallPolicy.Id
@@ -105,12 +136,19 @@ waitFirewallPolicy $firewallPolicy.Id
 Get-OAOFirewallPolicyRules -FirewallId $firewallPolicy.Id
 
 "remove one rule from the policy"
-Remove-OAOFirewallPolicyRules -FirewallId $firewallPolicy.Id -RuleId $addedRules[0].Rules[0].Id
+
+"added rules"
+$addedRules
+
+Remove-OAOFirewallPolicyRules -FirewallId $firewallPolicy.Id -RuleId $addedRules.Rules[0].Id
 
 "test clean up"
+
+waitServer -serverId $server.Id
+Remove-OAOServer $server.Id
+waitServerRemoved -serverId $server.Id
 
 waitFirewallPolicy $firewallPolicy.Id
 Remove-OAOFirewallPolicy -FirewallId $firewallPolicy.Id
 
-waitServer -serverId $server.Id
-Remove-OAOServer $server.Id
+
